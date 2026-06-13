@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lemma Games — Playful tools and games from the lab</title>
+<meta name="description" content="Lemma Games builds curious, science-rooted games and tools: the Microscope Builder, SciSwipe, and Active Nematic Tennis." />
+<meta name="theme-color" content="#ffffff" />
+<meta property="og:title" content="Lemma Games" />
+<meta property="og:description" content="Playful tools and games from the lab — Microscope Builder, SciSwipe, and Active Nematic Tennis." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lemmagames.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#000000;
+    --blue:#007FFF;
+    --blue-ink:#0067cf;
+    --orange:#FF6A14;
+    --muted:#5a5a5a;
+    --line:#000000;
+    --maxw:1140px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:"Space Grotesk",sans-serif;font-weight:600;line-height:1.05;letter-spacing:-.02em}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+
+  /* ---------- Nav ---------- */
+  header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:2px solid var(--ink)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.15rem;letter-spacing:-.02em}
+  .brand .mark{width:32px;height:32px;flex:none}
+  .navlinks{display:flex;gap:30px;align-items:center}
+  .navlinks a{font-size:.93rem;color:var(--ink);font-weight:500;transition:color .15s}
+  .navlinks a:hover{color:var(--blue-ink)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;
+    padding:11px 22px;border:2px solid var(--ink);border-radius:0;font-size:.92rem;font-weight:600;
+    box-shadow:3px 3px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+  .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .btn.dark{background:var(--ink);color:#fff}
+  .btn.ghost{background:var(--paper);color:var(--ink)}
+  .nav-toggle{display:none;background:none;border:0;cursor:pointer}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:80px 0 84px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--blue-ink);font-weight:600;margin-bottom:22px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--orange)}
+  .hero h1{font-size:clamp(2.5rem,5.4vw,4.3rem);max-width:13ch;font-weight:700}
+  .hero h1 .b{color:var(--blue)}
+  .hero h1 .u{box-shadow:inset 0 -.18em 0 var(--orange)}
+  .hero p.lead{font-size:clamp(1.05rem,1.5vw,1.28rem);color:var(--muted);max-width:46ch;margin:26px 0 36px}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+  .hero-art-box{position:relative;border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);
+    aspect-ratio:1/1;background:#fff;overflow:hidden}
+  .hero-art-box .tag{position:absolute;left:0;bottom:0;background:var(--ink);color:#fff;
+    font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 12px}
+
+  /* ---------- Sections ---------- */
+  section{padding:88px 0}
+  .sec-head{max-width:660px;margin-bottom:54px}
+  .sec-head .eyebrow{margin-bottom:16px}
+  .sec-head h2{font-size:clamp(2rem,3.6vw,2.9rem)}
+  .sec-head p{color:var(--muted);margin-top:16px;font-size:1.08rem}
+
+  /* ---------- Games ---------- */
+  .games{display:grid;gap:30px}
+  .game{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);background:var(--paper);overflow:hidden;
+    transition:transform .18s ease,box-shadow .18s ease}
+  .game:hover{transform:translate(-2px,-2px);box-shadow:12px 12px 0 var(--ink)}
+  .game .thumb{position:relative;min-height:320px;border-right:2px solid var(--ink);
+    background:#f3f3f3;overflow:hidden}
+  .game .body{padding:44px 42px;display:flex;flex-direction:column;justify-content:center}
+  .game:nth-child(even) .thumb{order:2;border-right:0;border-left:2px solid var(--ink)}
+  .game:nth-child(even) .body{order:1}
+  /* media slot: drop a screenshot or gif at the path in src and it fills the frame */
+  .thumb .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .shot-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;color:#9a9a9a;text-align:center;padding:20px;
+    background:
+      repeating-linear-gradient(45deg,#efefef 0 10px,#f6f6f6 10px 20px);}
+  .thumb .shot-ph svg{width:40px;height:40px;stroke:#bdbdbd}
+  .thumb .shot-ph span{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .status{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:700;padding:6px 13px;border:2px solid var(--ink);width:fit-content;margin-bottom:20px}
+  .status.live{background:var(--blue);color:#fff}
+  .status.soon{background:var(--orange);color:#000}
+  .status .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .game h3{font-size:1.75rem;margin-bottom:6px}
+  .game .platform{font-size:.84rem;color:var(--muted);font-weight:600;margin-bottom:16px;letter-spacing:.02em}
+  .game p{color:var(--muted);font-size:1.02rem;margin-bottom:26px}
+  .game .links{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .tlink{font-size:.93rem;font-weight:700;color:var(--blue-ink);display:inline-flex;align-items:center;gap:7px}
+  .tlink:hover{color:var(--ink)}
+  .tlink.muted{color:var(--muted);font-weight:600}
+  .tlink svg{width:15px;height:15px}
+
+  /* ---------- About ---------- */
+  .about{position:relative;overflow:hidden;background:var(--ink);color:var(--paper);border-top:2px solid var(--ink)}
+  .about-bg{position:absolute;inset:0;width:100%;height:100%;opacity:.45;z-index:0}
+  .about .wrap{position:relative;z-index:1}
+  .about .eyebrow{color:#fff}
+  .about .eyebrow::before{background:var(--orange)}
+  .about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:center}
+  .about h2{font-size:clamp(1.9rem,3.4vw,2.7rem);margin-bottom:20px}
+  .about p{color:#d2d2d2;font-size:1.08rem;margin-bottom:16px}
+  .stats{display:grid;grid-template-columns:1fr;gap:0;border:2px solid #fff;background:var(--ink)}
+  .stat{padding:22px 24px;border-bottom:2px solid #fff;display:flex;align-items:baseline;gap:16px}
+  .stat:last-child{border-bottom:0}
+  .stat .num{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:2.2rem;color:var(--blue);line-height:1;min-width:1.6em}
+  .stat .lbl{font-size:.95rem;color:#d2d2d2}
+
+  /* ---------- Footer ---------- */
+  footer{padding:66px 0 40px;border-top:2px solid var(--ink)}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap}
+  .foot-brand{max-width:34ch}
+  .foot-brand p{color:var(--muted);margin-top:14px;font-size:.96rem}
+  .foot-col h4{font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:700}
+  .foot-col a{display:block;color:var(--ink);font-size:.96rem;margin-bottom:10px;font-weight:500;transition:color .15s}
+  .foot-col a:hover{color:var(--blue-ink)}
+  .foot-bottom{margin-top:48px;padding-top:22px;border-top:2px solid var(--ink);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.85rem}
+
+  @media(max-width:860px){
+    .navlinks{display:none}
+    .nav-toggle{display:block}
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .hero-art-box{aspect-ratio:16/10;max-height:340px}
+    .game,.game:nth-child(even){grid-template-columns:1fr}
+    .game .thumb{min-height:210px;border-right:0;border-bottom:2px solid var(--ink);order:0!important}
+    .game:nth-child(even) .thumb{border-left:0}
+    .game .body{order:0!important;padding:32px 26px}
+    .about-grid{grid-template-columns:1fr;gap:34px}
+    section{padding:62px 0}
+    .hero{padding:56px 0 60px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#top">
+        <svg class="mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="37" height="37" fill="#000"/>
+          <g fill="none" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 9 V29 H24" stroke="#fff"/>
+            <path d="M15 9 L31 31" stroke="#007FFF"/>
+          </g>
+        </svg>
+        Lemma Games
+      </a>
+      <div class="navlinks">
+        <a href="#games">Games</a>
+        <a href="#about">Studio</a>
+        <a href="#contact">Contact</a>
+        <a class="btn" href="#games">Explore</a>
+      </div>
+      <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('games').scrollIntoView()">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">A studio at the bench</span>
+        <h1>Playful tools &amp; games, grown in the <span class="b">lab</span>.</h1>
+        <p class="lead">Lemma Games turns real science into things you can play with — from a build-it-yourself microscope to a tennis match played on a churning <span class="u">sea of active matter</span>.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#games">See the games</a>
+          <a class="btn ghost" href="#about">About the studio</a>
+        </div>
+      </div>
+      <div class="hero-art-box">
+        <canvas id="art-hero" aria-label="Dithered active-nematic flow field"></canvas>
+        <span class="tag">Active nematic flow</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="games">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What we make</span>
+      <h2>Three things to play with</h2>
+      <p>One out in the world, two on the way. Each one starts from a genuine scientific idea and ends somewhere delightfully hands-on.</p>
+    </div>
+
+    <div class="games">
+
+      <!-- Microscope Builder -->
+      <article class="game">
+        <div class="thumb">
+          <div class="shot-ph">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L4 22"/></svg>
+            <span>Screenshot / GIF</span>
+          </div>
+          <!-- drop media/microscope.png (or .gif) here and it fills the frame -->
+          <img class="shot" src="media/microscope.png" alt="Microscope Builder gameplay" onerror="this.remove()" />
+        </div>
+        <div class="body">
+          <span class="status live"><span class="dot"></span>Live now</span>
+          <h3>Microscope Builder</h3>
+          <div class="platform">Web · play in your browser</div>
+          <p>Assemble a working virtual microscope piece by piece — objectives, condenser, light path and all — and learn how the optics actually fit together as you go.</p>
+          <div class="links">
+            <a class="tlink" href="https://bezialemma.com/microscope/" target="_blank" rel="noopener">Launch the builder
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- SciSwipe -->
+      <article class="game">
+        <div class="thumb">
+          <div class="shot-ph">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L4 22"/></svg>
+            <span>Screenshot / GIF</span>
+          </div>
+          <!-- drop media/sciswipe.png (or .gif) here -->
+          <img class="shot" src="media/sciswipe.png" alt="SciSwipe gameplay" onerror="this.remove()" />
+        </div>
+        <div class="body">
+          <span class="status soon"><span class="dot"></span>Coming soon</span>
+          <h3>SciSwipe</h3>
+          <div class="platform">iOS &amp; Android · mobile</div>
+          <p>Swipe through bite-sized science — a fast, addictive way to meet new ideas, papers and discoveries one card at a time, wherever you are.</p>
+          <div class="links">
+            <span class="tlink muted">Wishlist coming to the App Store &amp; Google Play</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Active Nematic Tennis -->
+      <article class="game">
+        <div class="thumb">
+          <div class="shot-ph">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L4 22"/></svg>
+            <span>Screenshot / GIF</span>
+          </div>
+          <!-- drop media/nematic-tennis.png (or .gif) here -->
+          <img class="shot" src="media/nematic-tennis.png" alt="Active Nematic Tennis gameplay" onerror="this.remove()" />
+        </div>
+        <div class="body">
+          <span class="status soon"><span class="dot"></span>Coming soon</span>
+          <h3>Active Nematic Tennis</h3>
+          <div class="platform">Steam · Windows &amp; macOS</div>
+          <p>Rally across a living, churning field of active matter where the court itself flows and fights back. Read the chaos, place your shots, and bend the nematic to your will.</p>
+          <div class="links">
+            <span class="tlink muted">Wishlist on Steam — announcing soon</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="about" class="about">
+  <canvas id="art-about" class="about-bg" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="about-grid">
+      <div>
+        <span class="eyebrow">The studio</span>
+        <h2>We build at the intersection of science and play.</h2>
+        <p>Lemma Games is a small, independent studio that makes interactive things rooted in real research — biophysics, microscopy, active matter and the strange, beautiful patterns nature makes on its own.</p>
+        <p>Every project begins with a question we genuinely wanted to answer, then becomes something you can pick up, poke at, and enjoy. No prerequisites required.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="num">3</span><span class="lbl">Projects in motion</span></div>
+        <div class="stat"><span class="num">3</span><span class="lbl">Platforms — web, mobile &amp; desktop</span></div>
+        <div class="stat"><span class="num">∞</span><span class="lbl">Curiosity per release</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <svg class="mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="37" height="37" fill="#000"/>
+            <g fill="none" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 9 V29 H24" stroke="#fff"/>
+              <path d="M15 9 L31 31" stroke="#007FFF"/>
+            </g>
+          </svg>
+          Lemma Games
+        </a>
+        <p>Playful tools and games grown in the lab. Made with curiosity by the team behind bezialemma.com.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Games</h4>
+        <a href="https://bezialemma.com/microscope/" target="_blank" rel="noopener">Microscope Builder</a>
+        <a href="#games">SciSwipe</a>
+        <a href="#games">Active Nematic Tennis</a>
+      </div>
+      <div class="foot-col">
+        <h4>Studio</h4>
+        <a href="#about">About</a>
+        <a href="https://bezialemma.com/" target="_blank" rel="noopener">bezialemma.com</a>
+        <a href="https://github.com/bezlemma" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> Lemma Games. All rights reserved.</span>
+      <span>lemmagames.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // ---- Ordered (Bayer 8x8) dithering engine — the Obra Dinn look ----
+  const BAYER = [
+     0,32, 8,40, 2,34,10,42,
+    48,16,56,24,50,18,58,26,
+    12,44, 4,36,14,46, 6,38,
+    60,28,52,20,62,30,54,22,
+     3,35,11,43, 1,33, 9,41,
+    51,19,59,27,49,17,57,25,
+    15,47, 7,39,13,45, 5,37,
+    63,31,55,23,61,29,53,21
+  ];
+
+  const jobs = [];
+  function dither(id, fn, ink, paper, block){
+    const c = document.getElementById(id);
+    if(!c) return;
+    jobs.push({c, fn, ink, paper, block: block||3});
+  }
+  function render(job){
+    const {c, fn, ink, paper, block} = job;
+    const r = c.getBoundingClientRect();
+    if(r.width < 2 || r.height < 2) return;
+    const w = Math.max(1, Math.round(r.width / block));
+    const h = Math.max(1, Math.round(r.height / block));
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    const img = ctx.createImageData(w, h);
+    const d = img.data;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        let v = fn(x, y, w, h);
+        if(v<0) v=0; else if(v>1) v=1;
+        const t = (BAYER[(y&7)*8 + (x&7)] + 0.5) / 64;
+        const col = v > t ? paper : ink;
+        const i = (y*w + x) * 4;
+        d[i]=col[0]; d[i+1]=col[1]; d[i+2]=col[2]; d[i+3]=255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function renderAll(){ jobs.forEach(render); }
+
+  const BLACK=[0,0,0], WHITE=[255,255,255], BLUE=[0,127,255];
+
+  // Hero showcase: swirling active-nematic bands, blue dither on white
+  dither('art-hero', (x,y,w,h)=>{
+    const d1x=w*0.34, d1y=h*0.40, d2x=w*0.72, d2y=h*0.66;
+    const a = Math.atan2(y-d1y, x-d1x)*0.5 + Math.atan2(y-d2y, x-d2x)*0.5;
+    const bands = 0.5 + 0.5*Math.sin(a*4 + (x*0.9 + y*0.7)*0.05);
+    const cx=w/2, cy=h/2, rr=Math.hypot(x-cx,y-cy)/Math.hypot(cx,cy);
+    return bands*(1 - 0.45*rr) + 0.12;
+  }, BLUE, WHITE, 3);
+
+  // Studio backdrop: sparse white dither on black, fading across the band
+  dither('art-about', (x,y,w,h)=>{
+    const a = Math.atan2(y-h*0.6, x-w*0.15);
+    const flow = 0.5 + 0.5*Math.sin(a*3 + (x*0.7 + y*0.9)*0.05);
+    const grad = x / w;            // brighter (more black) toward the right
+    return 0.34 + 0.5*grad + 0.22*flow;
+  }, WHITE, BLACK, 3);
+
+  function boot(){ renderAll(); }
+  if(document.readyState==='complete') boot();
+  else window.addEventListener('load', boot);
+  let t; window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(renderAll,150); });
+</script>
+</body>
+</html>
